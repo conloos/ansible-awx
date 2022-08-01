@@ -1,0 +1,26 @@
+---
+# Install dev tools
+- name: install dev toolchain
+  ansible.builtin.apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: true
+  register: apt_status
+  until: apt_status is success
+  delay: 6
+  retries: 10
+  with_items:
+    - build-essential
+    - python3-pip
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_os_family == 'Debian'
+
+# pip install ansible
+- name: install pip toolchain
+  ansible.builtin.pip:
+    name: '{{ item }}'
+  with_items:
+    - ansible
+    - docker-compose
+...

@@ -1,5 +1,11 @@
 ---
 version_tags:
-  guacd: '1.4.0'
-  guacamole: '1.4.0_fix1433'
-  postgres: '14.0'
+  awx: '20.0.0'
+
+# postgres db
+pg_password: '{{ vault_awx.postgres_password }}'
+broadcast_websocket_secret: '{{ vault_awx.broadcast_websocket_secret }}'
+secret_key: '{{ vault_awx.secret_key }}'
+admin_password: '{{ vault_awx.admin_password }}'
+path_to_step_cli: /usr/bin/step-cli
+...

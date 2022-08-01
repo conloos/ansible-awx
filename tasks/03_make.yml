@@ -1,0 +1,44 @@
+---
+- name: copy inventory file
+  ansible.builtin.template:
+    src: inventory.j2
+    dest: '/opt/awx/tools/docker-compose/inventory'
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: make docker-compose-build
+  environment:
+    DEVEL_IMAGE_NAME: 'quay.io/awx/awx_devel:{{ version_tags.awx }}'
+  ansible.builtin.shell:
+    cmd: make docker-compose-build
+    chdir: '{{ awx_install_path }}'
+
+- name: start containers (docker-compose)
+  environment:
+    COMPOSE_TAG: '{{ version_tags.awx }}'
+    COMPOSE_UP_OPTS: '-d'
+  ansible.builtin.shell:
+    cmd: make docker-compose
+    chdir: '{{ awx_install_path }}'
+
+- name: Clean and build the UI
+  community.docker.docker_container_exec:
+    container: tools_awx_1
+    command: /bin/bash -c "make clean-ui ui-devel"
+
+- name: set admin pw
+  community.docker.docker_container_exec:
+    container: tools_awx_1
+    command: /bin/bash -c "awx-manage update_password --username=admin --password={{ admin_password }}"
+  register: result
+
+- name: pw changed
+  debug:
+    var: result.stdout
+
+- name: stop containers (docker compose)
+  ansible.builtin.shell:
+    cmd: docker-compose stop
+    chdir: '{{ awx_install_path }}tools/docker-compose/_sources/'
+...

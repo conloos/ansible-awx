@@ -1,0 +1,16 @@
+---
+# Workaround: create container from source 
+- name: create awx build directory
+  ansible.builtin.file:
+    path: '{{ awx_install_path }}'
+    state: directory
+    mode: '0755'
+  register: awx
+
+- name: git checkout awx
+  ansible.builtin.git:
+    repo: 'https://github.com/ansible/awx.git'
+    dest: '{{ awx_install_path }}'
+    version: '{{ version_tags.awx }}'
+    force: true
+...

@@ -1,0 +1,4 @@
+---
+default_awx_nginx_crt_path: "/etc/nginx/nginx.crt"
+default_awx_nginx_key_path: "/etc/nginx/nginx.key"
+...

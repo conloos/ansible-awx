@@ -1,0 +1,13 @@
+[Unit]
+Description=Step TLS Renewer - AWX Certificarte
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+WorkingDirectory=/usr/local/bin
+Environment=STEPPATH=/root/.step
+ExecStart=/usr/local/bin/awx-regenerate-certificate.sh
+
+[Install]
+WantedBy=multi-user.target

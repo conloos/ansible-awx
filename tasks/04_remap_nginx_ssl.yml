@@ -1,0 +1,15 @@
+---
+- name: remap certificate -key
+  lineinfile:
+    path: /opt/awx/tools/docker-compose/_sources/docker-compose.yml
+    insertafter: '      - "../../docker-compose/_sources/receptor/work_private_key.pem:/etc/receptor/work_private_key.pem"'
+    line: "      - \"{{ hostvars['localhost']['awx_nginx_key_path'] }}:/etc/nginx/nginx.key\""
+  when: hostvars['localhost']['awx_nginx_key_path'] is defined
+
+- name: remap certificate - crt
+  lineinfile:
+    path: /opt/awx/tools/docker-compose/_sources/docker-compose.yml
+    insertafter: '      - "../../docker-compose/_sources/receptor/work_private_key.pem:/etc/receptor/work_private_key.pem"'
+    line: "      - \"{{ hostvars['localhost']['awx_nginx_crt_path'] }}:/etc/nginx/nginx.crt\""
+  when: hostvars['localhost']['awx_nginx_crt_path'] is defined
+...

@@ -2,43 +2,42 @@ argument_specs:
   main:
     short_description: Main entrypoint
     options:
-      postgres.data_dir:
+      pg_password:
+        type: str
+        required: yes
+        description: Postgres Admin password
+      broadcast_websocket_secret:
+        type: str
+        required: yes
+        description: broadcast_websocket_secret
+      secret_key:
+        type: str
+        required: yes
+        description: secred_key
+      admin_password:
+        type: str
+        required: yes
+        description: Admin PW for the login.
+      awx_install_path:
         type: path
-        default: '/srv/data/guacamole/database'
-        required: no
-        description: Path to store Postgres-Data
-      postgres.db_name:
+        default: "/opt/awx/"
+        description: Path to install the sources.
+      version_tags.awx:
         type: str
-        default: 'guacamole_db'
-        required: no
-        description: Guacamole DB name.
-      postgres.auto_create_accounts:
-        type: bool
-        default: true
-        required: no
-        description: auto create user accounts
-      guacamole.data_dir:
+        default: "{{ version_tags.awx }}"
+        description: Version tag of awx.
+      awx_nginx_crt_path:
         type: path
-        default: '/srv/data/guacamole/guacamole'
-        required: no
-        description: Path to store Guacamole-Data
-      guacamole.home:
+        required: false
+        default: "{{ default_awx_nginx_crt_path }}"
+        description: Path to the certificate.
+      awx_nginx_key_path:
         type: path
-        default: '/guac'
-        required: no
-        description: Path to the Guacamole User
-      version_tags.guacd:
-        type: str
-        default: '1.4.0'
-        required: no
-        description: Version Tag of guacamole-server
-      version_tags.guacamole:
-        type: str
-        default: '1.4.0_fix1433'
-        required: no
-        description: Version Tag of guacamole-client
-      version_tags.postgres:
-        type: str
-        default: '14.0'
-        required: no
-        description: Version Tag of postgres
+        required: false
+        default: "{{ default_awx_nginx_key_path }}"
+        description: Path to the certificate-key.
+      path_to_step_cli:
+        type: path
+        default: "{{ path_to_step_cli }}"
+        required: false
+        description: Ptah to the step ca exicutables
