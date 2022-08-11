@@ -1,4 +1,13 @@
 ---
+- name: fixes
+  block:
+  - name: fix locale error
+    # 21.04.0
+    # fix locale error
+    ansible.builtin.shell:
+      cmd: "/usr/bin/sudo /usr/sbin/locale-gen de_DE.UTF-8 && /usr/sbin/update-locale LANG=de_DE.UTF-8"
+    when: version_tags.awx == '21.4.0'
+
 - name: copy inventory file
   ansible.builtin.template:
     src: inventory.j2
@@ -9,15 +18,17 @@
 
 - name: make docker-compose-build
   environment:
-    DEVEL_IMAGE_NAME: 'quay.io/awx/awx_devel:{{ version_tags.awx }}'
+    # DEVEL_IMAGE_NAME: "quay.io/awx/awx_devel:{{ version_tags.awx }}" # deactivated by: 21.4.0
+    LC_ALL: "C"
   ansible.builtin.shell:
     cmd: make docker-compose-build
     chdir: '{{ awx_install_path }}'
 
 - name: start containers (docker-compose)
   environment:
-    COMPOSE_TAG: '{{ version_tags.awx }}'
+    # COMPOSE_TAG: '{{ version_tags.awx }}' # deactivated by: 21.4.0
     COMPOSE_UP_OPTS: '-d'
+    LC_ALL: "C"
   ansible.builtin.shell:
     cmd: make docker-compose
     chdir: '{{ awx_install_path }}'
@@ -30,12 +41,17 @@
 - name: set admin pw
   community.docker.docker_container_exec:
     container: tools_awx_1
-    command: /bin/bash -c "awx-manage update_password --username=admin --password={{ admin_password }}"
+    command: "/bin/bash -c 'awx-manage update_password --username=admin --password={{ admin_password }}'"
   register: result
 
 - name: pw changed
   debug:
     var: result.stdout
+
+- name: load demo data
+  community.docker.docker_container_exec:
+    container: tools_awx_1
+    command: "/bin/bash -c 'awx-manage create_preload_data'"
 
 - name: stop containers (docker compose)
   ansible.builtin.shell:
