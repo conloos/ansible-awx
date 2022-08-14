@@ -11,7 +11,7 @@
       enabled: no
       masked: no
       daemon_reload: yes
-    when: ("'awx-nginx-cert.path' in services" | bool) and (hostvars['localhost']['awx_nginx_crt_path'] is defined)
+    when: ("'awx-nginx-cert.path' in services" | bool) and (hostvars['localhost']['ssl_crt_path'] is defined)
 
 # create awx service
 - block:
@@ -92,5 +92,5 @@
       enabled: yes
       masked: no
       daemon_reload: yes
-  when: hostvars['localhost']['awx_nginx_crt_path'] is defined
+  when: hostvars['localhost']['ssl_crt_path'] is defined
 ...

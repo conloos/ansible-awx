@@ -14,5 +14,5 @@ All configurations are held atomically via their own files.
 | broadcast_websocket_secret | broadcast_websocket_secret |
 | secret_key | secred_key |
 | admin_password | administrator account (admin) password |
-| awx_nginx_crt_path | path to crt-file for the nginx |
-| awx_nginx_key_path | path to key-file for the nginx |
+| ssl_crt_path | path to crt-file for the nginx, default: </etc/ssl/FQDN.key> |
+| ssl_key_path | path to key-file for the nginx, default: </etc/ssl/FQDN.key> |
