@@ -12,7 +12,6 @@
   with_items:
     - build-essential
     - python3-pip
-    - python-is-python3 # added by switching to ubuntu 22.04
     - python3-setuptools-scm # added ver: 21.4.0
   environment:
     DEBIAN_FRONTEND: noninteractive
