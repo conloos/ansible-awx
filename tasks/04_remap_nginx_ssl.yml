@@ -2,7 +2,7 @@
 - name: Check if certificate exist
   ansible.builtin.stat:
     path: "/etc/ssl/{{ cloudinit_fqdn }}.crt"
-  register: crt_path_result
+  register: ssl_crt_path_result
 
 - name: Check if certificate-key exist
   ansible.builtin.stat:
@@ -14,12 +14,12 @@
     path: /opt/awx/tools/docker-compose/_sources/docker-compose.yml
     insertafter: '      - "../../docker-compose/_sources/receptor/work_private_key.pem:/etc/receptor/work_private_key.pem"'
     line: "      - \"{{ ssl_crt_path }}:/etc/nginx/nginx.crt\""
-  when: crt_path_result.stat.exists
+  when: ssl_crt_path_result.stat.exists
 
 - name: remap certificate - key
   lineinfile:
     path: /opt/awx/tools/docker-compose/_sources/docker-compose.yml
     insertafter: '      - "../../docker-compose/_sources/receptor/work_private_key.pem:/etc/receptor/work_private_key.pem"'
     line: "      - \"{{ ssl_key_path }}:/etc/nginx/nginx.key\""
-  when: crt_path_result.stat.exists
+  when: ssl_crt_path_result.stat.exists
 ...
