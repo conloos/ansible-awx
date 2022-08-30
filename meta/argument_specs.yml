@@ -28,16 +28,16 @@ argument_specs:
         description: Version tag of awx.
       ssl_crt_path:
         type: path
-        required: false
+        required: False
         default: "{{ ssl_crt_path }}"
         description: Path to the certificate.
       ssl_key_path:
         type: path
-        required: false
+        required: False
         default: "{{ ssl_key_path }}"
         description: Path to the certificate-key.
       path_to_step_cli:
         type: path
         default: "{{ path_to_step_cli }}"
-        required: false
+        required: False
         description: Path to the step-ca executables.

@@ -12,5 +12,5 @@
     repo: 'https://github.com/ansible/awx.git'
     dest: '{{ awx_install_path }}'
     version: '{{ version_tags.awx }}'
-    force: true
+    force: True
 ...
