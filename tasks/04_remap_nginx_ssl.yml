@@ -9,15 +9,15 @@
     path: "/etc/ssl/{{ cloudinit_fqdn }}.key"
   register: key_path_result
 
-- name: remap certificate - crt
-  lineinfile:
+- name: Remap certificate - crt
+  ansible.builtin.lineinfile:
     path: /opt/awx/tools/docker-compose/_sources/docker-compose.yml
     insertafter: '      - "../../docker-compose/_sources/receptor/work_private_key.pem:/etc/receptor/work_private_key.pem"'
     line: "      - \"{{ ssl_crt_path }}:/etc/nginx/nginx.crt\""
   when: ssl_crt_path_result.stat.exists
 
-- name: remap certificate - key
-  lineinfile:
+- name: Remap certificate - key
+  ansible.builtin.lineinfile:
     path: /opt/awx/tools/docker-compose/_sources/docker-compose.yml
     insertafter: '      - "../../docker-compose/_sources/receptor/work_private_key.pem:/etc/receptor/work_private_key.pem"'
     line: "      - \"{{ ssl_key_path }}:/etc/nginx/nginx.key\""

@@ -1,22 +1,27 @@
 argument_specs:
   main:
-    short_description: Main entrypoint
+    # https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html#role-argument-validation
+    # https://docs.ansible.com/ansible/latest/dev_guide/developing_program_flow_modules.html#argument-spec
+    short_description: Role to install a awx.
+    description: Role to install a AWX by using Docker.
+    author:
+      - Frank Dornheim
     options:
       pg_password:
         type: str
-        required: yes
+        required: true
         description: Postgres Admin password
       broadcast_websocket_secret:
         type: str
-        required: yes
+        required: true
         description: broadcast_websocket_secret
       secret_key:
         type: str
-        required: yes
+        required: true
         description: secred_key
       admin_password:
         type: str
-        required: yes
+        required: true
         description: Admin PW for the login.
       awx_install_path:
         type: path
@@ -28,16 +33,16 @@ argument_specs:
         description: Version tag of awx.
       ssl_crt_path:
         type: path
-        required: False
+        required: false
         default: "{{ ssl_crt_path }}"
         description: Path to the certificate.
       ssl_key_path:
         type: path
-        required: False
+        required: false
         default: "{{ ssl_key_path }}"
         description: Path to the certificate-key.
       path_to_step_cli:
         type: path
         default: "{{ path_to_step_cli }}"
-        required: False
+        required: false
         description: Path to the step-ca executables.

@@ -1,10 +1,10 @@
 ---
 # Install dev tools
-- name: install dev toolchain
+- name: Install dev toolchain
   ansible.builtin.apt:
     name: '{{ item }}'
     state: present
-    update_cache: True
+    update_cache: true
   register: apt_status
   until: apt_status is success
   delay: 6
@@ -18,7 +18,7 @@
   when: ansible_os_family == 'Debian'
 
 # pip install ansible
-- name: install pip toolchain
+- name: Install pip toolchain
   ansible.builtin.pip:
     name: '{{ item }}'
   with_items:
