@@ -5,7 +5,14 @@
     # Verion 21.04.0
     # fix locale error
     ansible.builtin.command:
-      cmd: "/usr/bin/sudo /usr/sbin/locale-gen de_DE.UTF-8 && /usr/sbin/update-locale LANG=de_DE.UTF-8"
+      cmd: "/usr/bin/sudo /usr/sbin/locale-gen de_DE.UTF-8 en_US.UTF-8"
+    when: version_tags.awx == '21.4.0'
+  
+  - name: Fix locale error II
+    # Verion 21.04.0
+    # fix locale error
+    ansible.builtin.command:
+      cmd: "/usr/sbin/update-locale LANG=de_DE.UTF-8 LANG=en_US.UTF-8"
     when: version_tags.awx == '21.4.0'
 
 - name: Copy inventory file
@@ -17,9 +24,9 @@
     mode: '0644'
 
 - name: Make docker-compose-build  # noqa no-changed-when
-  environment:
-    # DEVEL_IMAGE_NAME: "quay.io/awx/awx_devel:{{ version_tags.awx }}" # deactivated by: 21.4.0
-    LC_ALL: "C"
+  # environment: # fdo - 20220917 test to prevent "en_US.UTF-8" at build
+  #   # DEVEL_IMAGE_NAME: "quay.io/awx/awx_devel:{{ version_tags.awx }}" # deactivated by: 21.4.0
+  #   LC_ALL: "C"
   ansible.builtin.command:
     cmd: make docker-compose-build
     chdir: '{{ awx_install_path }}'
@@ -28,7 +35,7 @@
   environment:
     # COMPOSE_TAG: '{{ version_tags.awx }}' # deactivated by: 21.4.0
     COMPOSE_UP_OPTS: '-d'
-    LC_ALL: "C"
+    # LC_ALL: "C" # fdo - 20220917 test to prevent "en_US.UTF-8" at build
   ansible.builtin.command:
     cmd: make docker-compose
     chdir: '{{ awx_install_path }}'

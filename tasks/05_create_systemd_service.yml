@@ -80,7 +80,7 @@
 
     # wait for finisching docker compose
     - name: Wait for Docker Compose AWX to complete
-      sansible.builtin.command:
+      ansible.builtin.command:
         cmd: journalctl -u awx.service | tail -1 | grep 'Finished Docker Compose AWX.'
       register: docker_compose_awx_success
       retries: 60
