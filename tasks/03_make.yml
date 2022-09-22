@@ -7,7 +7,7 @@
     ansible.builtin.command:
       cmd: "/usr/bin/sudo /usr/sbin/locale-gen de_DE.UTF-8 en_US.UTF-8"
     when: version_tags.awx == '21.4.0'
-  
+
   - name: Fix locale error II
     # Verion 21.04.0
     # fix locale error

@@ -79,7 +79,7 @@
         mode: '0644'
 
     # wait for finisching docker compose
-    - name: Wait for Docker Compose AWX to complete
+    - name: Wait for Docker Compose AWX to complete  # noqa no-changed-when
       ansible.builtin.command:
         cmd: journalctl -u awx.service | tail -1 | grep 'Finished Docker Compose AWX.'
       register: docker_compose_awx_success
