@@ -1,7 +1,7 @@
 ---
 galaxy_info:
+  role_name: "ansible_role_awx"
   author: "Frank Dornheim"
-  role_name: "ansible_awx"
   description: "An ansible role to create a awx."
   license: GPLv3
   min_ansible_version: 2.11.5

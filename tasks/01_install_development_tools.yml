@@ -1,27 +1,31 @@
 ---
-# Install dev tools
-- name: Install dev toolchain
-  ansible.builtin.apt:
-    name: '{{ item }}'
-    state: present
-    update_cache: true
-  register: apt_status
-  until: apt_status is success
-  delay: 6
-  retries: 10
-  with_items:
-    - build-essential
-    - python3-pip
-    - python3-setuptools-scm # added ver: 21.4.0
-  environment:
-    DEBIAN_FRONTEND: noninteractive
-  when: ansible_os_family == 'Debian'
+- name: Install
+  tags: install_tools
+  block:
+    # Install dev tools
+    - name: Install dev toolchain
+      ansible.builtin.apt:
+        name: '{{ item }}'
+        state: present
+        update_cache: true
+      register: apt_status
+      until: apt_status is success
+      delay: 6
+      retries: 10
+      with_items:
+        - build-essential
+        - python3-pip
+        - python3-setuptools-scm # added ver: 21.4.0
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+      when: ansible_os_family == 'Debian'
 
-# pip install ansible
-- name: Install pip toolchain
-  ansible.builtin.pip:
-    name: '{{ item }}'
-  with_items:
-    - ansible
-    - docker-compose
+    # pip install ansible
+    - name: Install pip toolchain
+      ansible.builtin.pip:
+        name: '{{ item }}'
+      with_items:
+        - ansible
+        - docker-compose
+
 ...

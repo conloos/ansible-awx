@@ -10,7 +10,7 @@
     enabled: false
     masked: false
     daemon_reload: true
-  when: ('awx-nginx-cert.path' in services | bool) and ('ssl_crt_path' is defined)
+  when: ( 'awx-nginx-cert.path' in services ) and ( 'awx_ssl_crt_path' is defined )
 
 # create awx service
 - name: Config awx service
@@ -33,34 +33,11 @@
 
 # certificates
 - name: Configure ACME Cert Management
+  tasks: create_certificates
   block:
-  # service to create or renew certificates
-    - name: Copy awx-regenerate-certificate.service to systemd configs
-      ansible.builtin.copy:
-        src: awx-regenerate-certificate.service
-        dest: /etc/systemd/system/awx-regenerate-certificate.service
-        owner: root
-        group: root
-        mode: '0644'
+    # Configure ACME Cert Management for awx ssl cert is own task
 
-    # Bash script to regenerate certificates new or renew
-    - name: Copy awx-regenerate-certificate.sh
-      ansible.builtin.template:
-        src: awx-regenerate-certificate.sh.j2
-        dest: '/usr/local/bin/awx-regenerate-certificate.sh'
-        owner: root
-        group: root
-        mode: '0770'
-
-    - name: Enable service awx.service and ensure it is not masked
-      ansible.builtin.systemd:
-        name: awx-regenerate-certificate
-        state: started
-        enabled: true
-        masked: false
-        daemon_reload: true
-
-    # restart awx if cert has changed
+    # service to restart awx if cert has changed
     - name: Copy awx-nginx-cert.service to systemd configs
       ansible.builtin.copy:
         src: awx-nginx-cert.service
@@ -80,8 +57,8 @@
 
     # wait for finisching docker compose
     - name: Wait for Docker Compose AWX to complete  # noqa no-changed-when
-      ansible.builtin.command:
-        cmd: journalctl -u awx.service | tail -1 | grep 'Finished Docker Compose AWX.'
+      ansible.builtin.shell:
+        cmd: "journalctl -u awx.service | tail -1 | grep 'Finished Docker Compose AWX.'"
       register: docker_compose_awx_success
       retries: 60
       delay: 5
@@ -94,5 +71,5 @@
         enabled: true
         masked: false
         daemon_reload: true
-  when: ssl_crt_path is defined
+  when: awx_ssl_crt_path is defined
 ...

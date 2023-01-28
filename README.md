@@ -9,10 +9,21 @@ All configurations are held atomically via their own files.
 
 | variable | description |
 | -------- | ----------- |
+| cloudinit_fqdn | f
 | version_tags.awx | Version to build |
 | pg_password | Postgres Admin password |
 | broadcast_websocket_secret | broadcast_websocket_secret |
 | secret_key | secred_key |
+| awx_install_path | Path to install the sources. |
 | admin_password | administrator account (admin) password |
-| ssl_crt_path | path to crt-file for the nginx, default: </etc/ssl/FQDN.key> |
-| ssl_key_path | path to key-file for the nginx, default: </etc/ssl/FQDN.key> |
+| awx_ssl_crt_path | path to crt-file for the nginx, default: **</etc/ssl/awx@FQDN.key>** |
+| awx_ssl_key_path | path to key-file for the nginx, default: **</etc/ssl/awx@FQDN.key>** |
+| path_to_step_cli | Path to the step-ca executables. |
+
+## Supported Tags
+
+| Tag | description |
+| --- | ----------- |
+| install_tools | Install Packages |
+| create_certificates | Install ACME Certs |
+

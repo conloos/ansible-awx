@@ -6,26 +6,58 @@
     # fix locale error
     ansible.builtin.command:
       cmd: "/usr/bin/sudo /usr/sbin/locale-gen de_DE.UTF-8 en_US.UTF-8"
-    when: version_tags.awx == '21.4.0'
+    when: version_tags.awx == '21.7.0'
 
   - name: Fix locale error II
     # Verion 21.04.0
     # fix locale error
     ansible.builtin.command:
       cmd: "/usr/sbin/update-locale LANG=de_DE.UTF-8 LANG=en_US.UTF-8"
-    when: version_tags.awx == '21.4.0'
+    when: version_tags.awx == '21.7.0'
 
-- name: Copy inventory file
+- name: Copy inventory
   ansible.builtin.template:
-    src: inventory.j2
-    dest: '/opt/awx/tools/docker-compose/inventory'
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     owner: root
     group: root
-    mode: '0644'
+    backup: true
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: "inventory.j2", dest: "/opt/awx/tools/docker-compose/inventory", mode: "0644" }
+
+- name: Add nginx certificate configuration
+  block:
+    - name: Copy config
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        backup: true
+        mode: "{{ item.mode }}"
+      with_items:
+        - { src: "docker-compose.yml.j2", dest: "/opt/awx/tools/docker-compose/ansible/roles/sources/templates/docker-compose.yml.j2", mode: "0644" }
+        - { src: "ansible_main_yml", dest: "/opt/awx/tools/docker-compose/ansible/roles/sources/tasks/main.yml", mode: "0644" }
+
+    - name: Assume-yes - write apt.conf.d/90forceyes
+      ansible.builtin.blockinfile:
+        path: "/opt/awx/tools/docker-compose/ansible/roles/sources/defaults/main.yml"
+        insertafter: "---"
+        block: |-
+          # Path to certs
+          awx_ssl_crt_path: "{{ awx_ssl_crt_path }}"
+          awx_ssl_key_path: "{{ awx_ssl_key_path}}"
+        backup: true
+        owner: root
+        group: root
+        mode: '0644'
+  when: awx_ssl_crt_path is defined and ( awx_ssl_crt_path | length >= 0 )
+
 
 - name: Make docker-compose-build  # noqa no-changed-when
   # environment: # fdo - 20220917 test to prevent "en_US.UTF-8" at build
-  #   # DEVEL_IMAGE_NAME: "quay.io/awx/awx_devel:{{ version_tags.awx }}" # deactivated by: 21.4.0
+  #   # DEVEL_IMAGE_NAME: "quay.io/awx/awx_devel:{{ version_tags.awx }}" # deactivated by: 21.7.0
   #   LC_ALL: "C"
   ansible.builtin.command:
     cmd: make docker-compose-build
@@ -33,7 +65,7 @@
 
 - name: Start containers (docker-compose)  # noqa no-changed-when
   environment:
-    # COMPOSE_TAG: '{{ version_tags.awx }}' # deactivated by: 21.4.0
+    # COMPOSE_TAG: '{{ version_tags.awx }}' # deactivated by: 21.7.0
     COMPOSE_UP_OPTS: '-d'
     # LC_ALL: "C" # fdo - 20220917 test to prevent "en_US.UTF-8" at build
   ansible.builtin.command:
@@ -51,7 +83,7 @@
     command: "/bin/bash -c 'awx-manage update_password --username=admin --password={{ admin_password }}'"
   register: result
 
-- name: Pw changed
+- name: PW changed
   ansible.builtin.debug:
     var: result.stdout
 

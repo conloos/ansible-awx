@@ -1,0 +1,31 @@
+---
+- name: Configure ACME Cert Management for awx ssl cert
+  when: awx_ssl_crt_path is defined
+  tasks: create_certificates
+  block:
+  # service to create or renew certificates
+    - name: Copy awx-regenerate-certificate.service to systemd configs
+      ansible.builtin.copy:
+        src: awx-regenerate-certificate.service
+        dest: /etc/systemd/system/awx-regenerate-certificate.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    # Bash script to regenerate certificates new or renew
+    - name: Copy awx-regenerate-certificate.sh
+      ansible.builtin.template:
+        src: awx-regenerate-certificate.sh.j2
+        dest: '/usr/local/bin/awx-regenerate-certificate.sh'
+        owner: root
+        group: root
+        mode: '0770'
+
+    - name: Enable service awx.service and ensure it is not masked
+      ansible.builtin.systemd:
+        name: awx-regenerate-certificate
+        state: started
+        enabled: true
+        masked: false
+        daemon_reload: true
+...

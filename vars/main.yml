@@ -1,6 +1,6 @@
 ---
 version_tags:
-  awx: '21.4.0'
+  awx: '21.7.0'
 
 # postgres db
 pg_password: '{{ vault_awx.postgres_password }}'

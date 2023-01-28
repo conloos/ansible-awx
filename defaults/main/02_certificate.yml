@@ -1,4 +1,4 @@
 ---
-ssl_crt_path: "/etc/ssl/{{ cloudinit_fqdn }}.crt"
-ssl_key_path: "/etc/ssl/{{ cloudinit_fqdn }}.key"
+awx_ssl_crt_path: "/etc/ssl/awx_{{ cloudinit_fqdn }}.crt"
+awx_ssl_key_path: "/etc/ssl/awx_{{ cloudinit_fqdn }}.key"
 ...

@@ -35,15 +35,15 @@ argument_specs:
         type: str
         default: "{{ version_tags.awx }}"
         description: Version tag of awx.
-      ssl_crt_path:
+      awx_ssl_crt_path:
         type: path
         required: false
-        default: "{{ ssl_crt_path }}"
+        default: "{{ awx_ssl_crt_path }}"
         description: Path to the certificate.
-      ssl_key_path:
+      awx_ssl_key_path:
         type: path
         required: false
-        default: "{{ ssl_key_path }}"
+        default: "{{ awx_ssl_key_path }}"
         description: Path to the certificate-key.
       path_to_step_cli:
         type: path

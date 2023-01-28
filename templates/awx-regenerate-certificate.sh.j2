@@ -6,8 +6,8 @@
 # Override: False
 
 STEP_CLI_PATH={{ path_to_step_cli }}
-CERT_FILENAME_PATH={{ ssl_crt_path }}
-CERT_KEY_PATH={{ ssl_key_path }}
+CERT_FILENAME_PATH={{ awx_ssl_crt_path }}
+CERT_KEY_PATH={{ awx_ssl_key_path }}
 FQDN={{ cloudinit_fqdn }}
 
 #
@@ -20,33 +20,14 @@ if [[ ! -f "$STEP_CLI_PATH" ]] ; then
   exit 1
 fi
 
-# test for cert file
-if [[ ! -f "$CERT_FILENAME_PATH" ]] ; then
-  echo "The certificate is not found. This is an Error."
-  exit 1
-fi
-
-# test for key file
-if [[ ! -f "$CERT_KEY_PATH" ]] ; then
-  echo "The certificate-key is not found. This is an Error."
-  exit 1
-fi
-
 #
 # Generating and renew Certificates
 #
 
-if [[ -f /var/run/awx-cert.pid ]] ; then
-  /bin/kill -9 $(<"/var/run/awx-cert.pid")
-  /bin/rm /var/run/awx-cert.pid
-fi
+# Generate a new Certificate. It is possible that the VM/Container was a long time off, so renew the cert didn't work.
+$STEP_CLI_PATH ca certificate $FQDN $CERT_FILENAME_PATH $CERT_KEY_PATH -kty=RSA --size=4096 --force
 
-$STEP_CLI_PATH ca certificate $FQDN $CERT_FILENAME_PATH $CERT_KEY_PATH --force
-/bin/nohup $STEP_CLI_PATH ca renew $CERT_FILENAME_PATH $CERT_KEY_PATH --daemon --force &
-returnValue=$?
+/bin/chmod 644 $CERT_FILENAME_PATH
 
-if [[ $returnValue -eq 0 ]] ; then
-  echo $! > /var/run/awx-cert.pid
-else
-  echo "Step renew exits with error."
-fi
+# Start the renew
+$STEP_CLI_PATH ca renew $CERT_FILENAME_PATH $CERT_KEY_PATH --daemon --force
